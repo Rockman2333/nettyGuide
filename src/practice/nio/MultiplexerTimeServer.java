@@ -44,6 +44,7 @@ public class MultiplexerTimeServer implements Runnable {
                     try{
                         handleInput(key);
                     } catch (Exception e){
+                        e.printStackTrace();
                         key.cancel();
                         if (key.channel() != null){
                             key.channel().close();
@@ -68,6 +69,7 @@ public class MultiplexerTimeServer implements Runnable {
             if (key.isAcceptable()){
                 ServerSocketChannel ssc = (ServerSocketChannel) key.channel();
                 SocketChannel sc = ssc.accept();
+                sc.configureBlocking(false);
                 sc.register(this.selector, SelectionKey.OP_READ);
             }
             if (key.isReadable()){
@@ -93,7 +95,7 @@ public class MultiplexerTimeServer implements Runnable {
         if (response != null){
             byte[] bytes = response.getBytes();
             ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
-            writeBuffer.put(writeBuffer);
+            writeBuffer.put(bytes);
             writeBuffer.flip();
             channel.write(writeBuffer);
         }

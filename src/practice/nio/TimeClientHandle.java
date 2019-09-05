@@ -56,7 +56,7 @@ public class TimeClientHandle implements Runnable {
         while (!stop){
             try {
                 selector.select(1000);
-                Iterator<SelectionKey> iterator = selector.keys().iterator();
+                Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
                 SelectionKey key = null;
                 while (iterator.hasNext()){
                     key = iterator.next();
@@ -96,6 +96,7 @@ public class TimeClientHandle implements Runnable {
                 ByteBuffer readBuffer = ByteBuffer.allocate(1024);
                 int readBytes = socketChannel.read(readBuffer);
                 if(readBytes > 0){
+                    readBuffer.flip();
                     byte[] bytes = new byte[readBuffer.remaining()];
                     readBuffer.get(bytes);
                     String body = new String(bytes, "UTF-8");
